@@ -9,6 +9,8 @@ using AccountManager.Data;
 using AccountManager.Data.Models;
 using AccountManager.Data.DataServices;
 using AccountManager.Data.Models.DTO;
+using System.Data.SqlClient;
+using AccountManager.UI.Extension;
 
 namespace AccountManager.UI.Controllers
 {
@@ -54,11 +56,20 @@ namespace AccountManager.UI.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Code,Name,Id")] AccountTypeDTO accountType)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Save(accountType);
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Save(accountType);
+                    return RedirectToAction(nameof(Index));
+                }
+
             }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.HandlerErrorMessage());
+            }
+
             return View(accountType);
         }
 
@@ -91,12 +102,14 @@ namespace AccountManager.UI.Controllers
                 try
                 {
                     _context.Save(accountType);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    throw;
+                    ModelState.AddModelError("", ex.HandlerErrorMessage());
                 }
-                return RedirectToAction(nameof(Index));
+
+
             }
             return View(accountType);
         }
