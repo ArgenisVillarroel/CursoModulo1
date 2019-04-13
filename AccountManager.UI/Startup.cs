@@ -36,6 +36,7 @@ namespace AccountManager.UI
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+
             services.AddAutoMapper();
             services.AddDbContext<AccountManagerDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<AccountTypeDataService>();
